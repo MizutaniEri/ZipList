@@ -170,7 +170,13 @@ namespace ZipList
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
             var item = listView1.SelectedItems[0];
-            Process.Start(item.Text);
+            var file = Path.Combine(System.IO.Path.GetTempPath(), item.Text);
+            using (var zipArc = ZipFile.Open(zipFile, ZipArchiveMode.Read))
+            {
+                var entry = zipArc.GetEntry(item.Text);
+                entry.ExtractToFile(file, true);
+                var p = Process.Start(file);
+            }
         }
     }
 }
